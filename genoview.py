@@ -331,27 +331,31 @@ def LoadGenoModel(fileName):
     return model
 
 
-def UpdateModelPoseFromNumpyArrays(model, positions, rotations):
+def GetModelBindPoseAsNumpyArrays(model):
     
-    assert model.boneCount == len(positions)
-    assert model.boneCount == len(rotations)
+    bindPos = np.zeros([model.boneCount, 3])
+    bindRot = np.zeros([model.boneCount, 4])
     
     for boneId in range(model.boneCount):
-        
         bindTransform = model.bindPose[boneId]
-        bindMatrix = MatrixMultiply(MatrixMultiply(
-            MatrixScale(bindTransform.scale.x, bindTransform.scale.y, bindTransform.scale.z),
-            QuaternionToMatrix(bindTransform.rotation)),
-            MatrixTranslate(bindTransform.translation.x, bindTransform.translation.y, bindTransform.translation.z))
+        bindPos[boneId] = (bindTransform.translation.x, bindTransform.translation.y, bindTransform.translation.z)
+        bindRot[boneId] = (bindTransform.rotation.w, bindTransform.rotation.x, bindTransform.rotation.y, bindTransform.rotation.z)
+        
+    return bindPos, bindRot
+    
+    
+def UpdateModelPoseFromNumpyArrays(model, bindPos, bindRot, animPos, animRot):
+    
+    meshPos = quat.mul_vec(animRot, quat.inv_mul_vec(bindRot, -bindPos)) + animPos
+    meshRot = quat.mul_inv(animRot, bindRot)
+    
+    matArray = np.frombuffer(ffi.buffer(
+        model.meshes[0].boneMatrices, model.boneCount * 4 * 4 * 4), 
+        dtype=np.float32).reshape([model.boneCount, 4, 4])
+    
+    matArray[:,:3,:3] = quat.to_xform(meshRot)
+    matArray[:,:3,3] = meshPos
 
-        targetTranslation = Vector3(positions[boneId,0], positions[boneId,1], positions[boneId,2])
-        targetRotation = Vector4(rotations[boneId,1], rotations[boneId,2], rotations[boneId,3], rotations[boneId,0])
-        targetMatrix = MatrixMultiply(MatrixMultiply(
-            MatrixScale(1.0, 1.0, 1.0),
-            QuaternionToMatrix(targetRotation)),
-            MatrixTranslate(targetTranslation.x, targetTranslation.y, targetTranslation.z))
-
-        model.meshes[0].boneMatrices[boneId] = MatrixMultiply(MatrixInvert(bindMatrix), targetMatrix);
 
 #----------------------------------------------------------------------------------
 # Debug Draw
@@ -491,6 +495,8 @@ if __name__ == "__main__":
     genoModel = LoadGenoModel(b"./resources/Geno.bin")
     genoPosition = Vector3(0.0, 0.0, 0.0)
     
+    bindPos, bindRot = GetModelBindPoseAsNumpyArrays(genoModel)
+    
     # Animation
     
     # bvhData = bvh.load("./resources/ground1_subject1.bvh")
@@ -545,7 +551,9 @@ if __name__ == "__main__":
         # Animation
         
         animationFrame = (animationFrame + 1) % len(localPositions)
-        UpdateModelPoseFromNumpyArrays(genoModel, globalPositions[animationFrame], globalRotations[animationFrame])
+        UpdateModelPoseFromNumpyArrays(
+            genoModel, bindPos, bindRot, 
+            globalPositions[animationFrame], globalRotations[animationFrame])
 
         # Shadow Light Tracks Character
         
