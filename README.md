@@ -19,8 +19,17 @@ However they can likely be adapted to new characters, or the normal raylib-suppo
 
 # Getting Started
 
+You need to first pip install the [python raylib bindings](https://electronstudio.github.io/raylib-python-cffi/):
+
+```
+pip install raylib
+```
+
+Then you should just be able to run `genoview.py`.
+
 Here are the steps to viewing any of the animation data linked above in this viewer.
 
 1. Download the BVH files for the animation dataset you want to view.
 2. Place any bvh files you want to view in the `resources` folder.
 3. Edit the line in `genoview.py` where `bvhData` is loaded to load the animation you want to view instead.
+
