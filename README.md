@@ -14,6 +14,7 @@ Included are some simple maya scripts for exporting characters into a binary for
 * [ZeroEGGS retargeted](https://github.com/orangeduck/zeroeggs-retarget)
 * [Motorica retargeted](https://github.com/orangeduck/motorica-retarget)
 * [100STYLE retargeted](https://github.com/orangeduck/100style-retarget)
+* [InterAct retargeted](https://github.com/orangeduck/interact-retarget)
 
 However they can likely be adapted to new characters, or the normal raylib-supported file formats can be loaded too.
 
@@ -32,4 +33,5 @@ Here are the steps to viewing any of the animation data linked above in this vie
 1. Download the BVH files for the animation dataset you want to view.
 2. Place any bvh files you want to view in the `resources` folder.
 3. Edit the line in `genoview.py` where `bvhData` is loaded to load the animation you want to view instead.
+
 
