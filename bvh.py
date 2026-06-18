@@ -26,6 +26,7 @@ def load(filename, order=None):
     i = 0
     active = -1
     end_site = False
+    frametime = 1.0 / 60.0
 
     names = []
     orients = np.array([]).reshape((0, 4))
@@ -129,7 +130,8 @@ def load(filename, order=None):
         'offsets': offsets,
         'parents': parents,
         'names': names,
-        'order': order
+        'order': order,
+        'frametime': frametime
     }
     
     

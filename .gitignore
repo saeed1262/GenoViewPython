@@ -1,3 +1,19 @@
 genoview.exe
 *__pycache__*
 resources/GenoAnimated.mb
+
+# Downloaded LaFAN1 motion-capture clips (large; not part of the repo).
+# The small bundled Geno_bind/Geno_stance poses stay tracked.
+resources/dance*_subject*.bvh
+resources/walk*_subject*.bvh
+resources/run*_subject*.bvh
+resources/fight*_subject*.bvh
+resources/aiming*_subject*.bvh
+resources/jumps*_subject*.bvh
+resources/ground*_subject*.bvh
+resources/sprint*_subject*.bvh
+resources/obstacles*_subject*.bvh
+resources/fallAndGetUp*_subject*.bvh
+resources/multipleActions*_subject*.bvh
+resources/push*_subject*.bvh
+.DS_Store
